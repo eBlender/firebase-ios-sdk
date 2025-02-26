@@ -1178,3 +1178,33 @@ private class AuthTokenProvider: AuthInterop {
 private class MessagingTokenProvider: NSObject, MessagingInterop {
   var fcmToken: String? { return "fakeFCMToken" }
 }
+
+
+extension IntegrationTests {
+  @available(iOS 15.0, *)
+   func testGenStreamContent() async throws {
+       let callable: Callable<String, StreamResponse<String, String>> = functions.httpsCallable("genStream")
+     let stream =  try callable.stream("genStream")
+       //Todo fetch actual content.
+       for try await response in stream {
+         switch response {
+           case .message(let message):
+               print("Message: \(message)")
+           case .result(let result):
+               print("Result: \(result)")
+           }
+       }
+   }
+
+   @available(iOS 15.0, *)
+   func testGenStream_NoArgs_ThrowsError() async throws {
+       let callable: Callable<String, StreamResponse<String, String>> = functions.httpsCallable("genStream")
+     let stream =  try callable.stream("")
+       //Todo fetch actual content.
+       for try await response in stream {
+        //TODO add logic to fetch the error after we enable
+         // throw(NSError(domain: "The response cannot be decoded to the given type.", code: 0, userInfo: nil))
+         // back in Callable+Codable func stream(_ data: Request?=nil) -> AsyncThrowingStream<Response, Error>
+       }
+   }
+}
